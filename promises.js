@@ -47,35 +47,45 @@ function deletePost(){
 // createPost({ title: 'Post Three', body: 'This is post three'})
 // .then(() => {
 //     getPosts()
-//     deletePost().then(() => {
+    
+//     deletePost().then(() => {createPost({ title: 'Post Three', body: 'This is post three'})
 //         getPosts();
 //     }).catch(err => console.log(err))
 // }).catch(err => console.log(err))
 
 //Promise.all
 
-const promise1 = Promise.resolve('Hello World');
-const promise2 = 10;
-const promise3 = new Promise((resolve, reject) => 
-    setTimeout(resolve, 2000, 'GoodBye')
-);
+// const promise1 = Promise.resolve('Hello World');
+// const promise2 = 10;
+// const promise3 = new Promise((resolve, reject) => 
+//     setTimeout(resolve, 2000, 'GoodBye')
+// );
 
-Promise.all([promise1, promise2, promise3]).then(values => console.log(values));
+// Promise.all([promise1, promise2, promise3]).then(values => console.log(values));
 
-function updateLastActivityTime()  {
-    return new Promise((resolve, reject) => {
-        setTimeout(() => {
+let updateLastActivityTime = new Promise((resolve, reject) => {
+    setTimeout(() => {
+        let error = false;
+        if(!error){
             posts.createdAt = new Date().getTime();
-            resolve(posts.createdAt);
-        },1000)
-    })
-}
+            resolve((new Date().getTime() - posts.createdAt)/1000);
+        }else{
+            reject("Couldn't reach server");
+        }
+    },1000)
+})
 
-function userUpdatesPost(){
-    return Promise.all([createPost, updateLastActivityTime]).then(([createPostResolves, updateLastActivityTimeResolves]) => {
-        console.log(updateLastActivityTimeResolves)
-    })
-    .catch(err => console.log(err))
-}
+// Promise.all([createPost({ title: 'Post Three', body: 'This is post three'}),updateLastActivityTime]).then(values => console.log(values));
 
-console.log(userUpdatesPost());
+Promise.all([createPost({ title: 'Post Three', body: 'This is post three',createdAt:new Date().getTime()}),updateLastActivityTime])
+.then(() => {
+    getPosts()
+    
+    deletePost().then(() => {createPost({ title: 'Post Three', body: 'This is post three'})
+         getPosts();
+     })
+
+    console.log(posts);
+}).catch(err => console.log(err))
+
+
